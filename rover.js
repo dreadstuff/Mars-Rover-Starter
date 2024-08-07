@@ -1,42 +1,93 @@
 class Rover {
    // Write code here!
-   constructor(position, mode = "NORMAL", generatorWatts = 110) {
+   constructor(position) {
       //setting parameter to variables in constructor
       this.position = position;
-      this.mode = mode;
-      this.generatorWatts = generatorWatts;
+      this.mode = "NORMAL";
+      this.generatorWatts = 110;
       };
 
       receiveMessage(message) {
-         const results = []; //init structure for array/results
+         let response = {
+            message: message.name,
+            results: []
+         };
+        // let results = [], //init structure for array/results
 
-         //loop statement (for) to loop over each comm in comm array for msg obj
-            for (let i = 0; i > message.commands.length; i++) { //for loop setup
-               const command = message.commands[i];  //init command to message command loop, loop comm
-               let result = { completed: true };
-         //if else and else statements for diff comm types
-               if (command.commandType === "MODE_CHANGE") {
-                  this.mode = command.value; 
-               } else if (command.commandType === "MOVE") {
-                  if (this.mode === "LOW_POWER") {
-                     result.completed = false;
-                  } else {
-                     this.position = command.value;
-                  }
-               } else if (command.commandType === "STATUS_CHECK") {
-                  result.roverStatus = {
-                     mode: this.mode,
-                     generatorWatts: this.generatorWatts,
-                     position: this.position
-                  };
-                }
-                //push result array
-                results.push(result);
-            }
-         //return and object with message.name and results array 
-         return {message: message.name, results: results}
-       };
-  };
+        for(let i = 0; i < message.commands.length; i++) {
+         if(message.commands[i].commandType === "MOVE" && this.mode !== "LOW_POWER") {
+            this.position = message.commands[i].value; //move command updates current position init
+            let result = {
+               completed: true //results object and true completed
+            };
+            response.results.push(result);
+         }
+         else if(message.commands[i].commandType === "STATUS_CHECK") {
+            let result = {
+               completed: true,
+               roverStatus: {
+                  mode: this.mode,
+                  generatorWatts: this.generatorWatts,
+                  position: this.position
+               }
+            };
+            response.results.push(result);
+         }
+         else if(message.commands[i].commandType === "MODE_CHANGE") {
+            this.mode = message.commands[i].value;
+            let result = {
+               completed: true
+            };
+            response.results.push(result);
+         }
+         else {
+            let result = {
+               completed: false
+            };
+            response.results.push(result);
+         }
+        }
+        return response;
+      }
+   };
+
+
+
+
+
+
+
+
+
+
+        ////ATTEMPT 2, NOT USING, TRYING AGAIN
+//          //loop statement (for) to loop over each comm in comm array for msg obj
+//             for (let i = 0; i > message.commands.length; i++) { //for loop setup
+//                let command = message.commands[i];  //init command to message command loop, loop comm
+//                let result = { completed: true };
+//          //if else and else statements for diff comm types
+//                if (command.commandType === "MODE_CHANGE") {
+//                   this.mode = command.value; 
+//                } else if (command.commandType === "MOVE") {
+//                   if (this.mode === "LOW_POWER") {
+//                      result.completed = false;
+//                   } else {
+//                      this.position = command.value;
+//                   }
+//                } else if (command.commandType === "STATUS_CHECK") {
+//                   result.roverStatus = {
+//                      mode: this.mode,
+//                      generatorWatts: this.generatorWatts,
+//                      position: this.position
+//                   };
+//                 }
+//                 //push result array
+//                 results.push(result);
+//             }
+//          //return and object with message.name and results array 
+//          return {message: message.name, results: results}
+//        };
+//   };
 
 //UNABLE TO FIX ISSUES BELOW, REBUILDING EASIER STRUCTURE DON'T USE~~~~~
 //       receiveMessage(message) {
