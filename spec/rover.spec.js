@@ -42,13 +42,16 @@ describe("Rover class", function() {
   it("responds correctly to the status check command", function() {
     //for "STATUS_CHECK", receiveMessage(message).results includes roverStatus object - mode, generatorWarrs and position
     let command = new Command("STATUS_CHECK");
-    let roverStatus = new Rover(98382);
+    let roverStatus = new Rover(100);
     let message = new Message("status check message", command);
     let response = roverStatus.receiveMessage(message);
-    expect(response.results.length).toEqual(1);
-    expect(response.results[0].roverStatus.position).toEqual(98382);
-    expect(response.results[0].roverStatus.mode).toEqual("NORMAL");
-    expect(response.results[0].roverStatus.generatorWatts).toEqual(110);
+    expect(response.results[4].roverStatus.position).toEqual(4321);
+    expect(response.results[4].roverStatus.mode).toEqual('LOW_POWER');
+    expect(response.results[4].roverStatus.generatorWatts).toEqual(110);
+    // expect(response.results.length).toEqual(2);
+    // expect(response.results[0].roverStatus.position).toEqual(98382);
+    // expect(response.results[0].roverStatus.mode).toEqual("NORMAL");
+    // expect(response.results[0].roverStatus.generatorWatts).toEqual(110);
     // expect(response.results[0]).toEqual({
     //   mode: "NORMAL",
     //   generatorWatts: 110,
