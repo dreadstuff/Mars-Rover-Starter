@@ -1,20 +1,22 @@
-class Rover {
-   // Write code here!
-   constructor(position) {
+class Rover { //initial provided class
+   constructor(position) { //constructor method with position parameter, initializes rover's position
       //setting parameter to variables in constructor
-      this.position = position;
-      this.mode = "NORMAL";
-      this.generatorWatts = 110;
+      this.position = position; //current position for Rover
+      this.mode = "NORMAL"; //current mode for Rover
+      this.generatorWatts = 110; //current gw for Rover
       };
 
-      receiveMessage(message) {
-         let response = {
+      //method for processing commands sent to Rover - "message" as parameter
+      //response object init, message.name stores name, results is array for processing command in message
+      receiveMessage(message) { 
+         let response = { 
             message: message.name,
             results: []
          };
-        // let results = [], //init structure for array/results
 
+      //using a loop for commands, for loop iterates over each commands in message object
         for(let i = 0; i < message.commands.length; i++) {
+         //"if" for "MOVE" command and checks if rover is not in "LOW_POWER" mode, rover's position is updated - command result is logged as successfully completed and pushes to response.results array
          if(message.commands[i].commandType === "MOVE" && this.mode !== "LOW_POWER") {
             this.position = message.commands[i].value; //move command updates current position init
             let result = {
@@ -22,6 +24,7 @@ class Rover {
             };
             response.results.push(result);
          }
+         //STATUS_CHECK - rover returns to its current mode, gw, and position - success if true then pushed to response.results array
          else if(message.commands[i].commandType === "STATUS_CHECK") {
             let result = {
                completed: true,
@@ -33,6 +36,7 @@ class Rover {
             };
             response.results.push(result);
          }
+         //MODE_CHANGE - rover's mode is updated and successful execution is logged/true completed
          else if(message.commands[i].commandType === "MODE_CHANGE") {
             this.mode = message.commands[i].value;
             let result = {
@@ -40,6 +44,7 @@ class Rover {
             };
             response.results.push(result);
          }
+         //else for false results/incomplete commands
          else {
             let result = {
                completed: false
@@ -47,17 +52,10 @@ class Rover {
             response.results.push(result);
          }
         }
+        //returns response object, including message name and outcomes for the command
         return response;
       }
    };
-
-
-
-
-
-
-
-
 
 
         ////ATTEMPT 2, NOT USING, TRYING AGAIN
