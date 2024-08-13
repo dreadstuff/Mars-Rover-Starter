@@ -20,19 +20,19 @@ describe("Rover class", function() {
 })
 //test 8
   it("response returned by receiveMessage contains the name of the message", function() {
-    let command = new Command("MODE_CHANGE", "NORMAL"); //creates object based on Command class - 
-    let message = new Message("TA Power", command); //init message from message.js
-    let rover = new Rover(); //init rover class 
+    let command = new Command("MODE_CHANGE", "NORMAL"); //creates object based on Command class - used for message class
+    let message = new Message("Wow a message!", command); //init message from message.js
+    let rover = new Rover(); //init rover class - not sure if i need more on this line
     let response = rover.receiveMessage(message); //init response to received message within rover class
 
-    expect(response.message).toEqual("TA Power"); //expect exact response from rover message "TA Power"
+    expect(response.message).toEqual("Wow a message!"); //expect exact response from rover message "TA Power"
   });
   
   //test 9
    it("response returned by receiveMessage includes two results if two commands are sent in the message", function() {
     //let command = new Command("MODE_CHANGE", "NORMAL"); //init command from command.js
-    let command = [new Command("MODE_CHANGE", "LOW_POWER"), new Command("STATUS_CHECK")];
-    let rover = new Rover(100);
+    let command = [new Command("MODE_CHANGE", "LOW_POWER"), new Command("STATUS_CHECK")]; //confusing here, wouldn't work without brackets, is this due to array?
+    let rover = new Rover(); //do i need anything in here for the test?
     let message = new Message("Test message with two messages", command);
     let response = rover.receiveMessage(message);
     expect(response.results.length).toEqual(2);
@@ -44,6 +44,7 @@ describe("Rover class", function() {
   //creating new Rover instance with 100 position, set with position of 100, mode of normal, and generatorwatts of 110 (from rover class)
   //creating message object - status check message and an array from command object created above (message can hold multiple commands as array)
   //creating response object - sending message to the rover using receiveMessage method, method processes commands in message to return a response - the message and results (array of corresponding attribute)
+
   it("responds correctly to the status check command", function() {
     let command = new Command("STATUS_CHECK"); 
     let rover = new Rover(100); 
@@ -76,7 +77,7 @@ describe("Rover class", function() {
     expect(rover.mode).toContain("LOW_POWER");
   })
 
-//test 12
+//test 12 - two commands set, low power then attempting to move it 10, becomes false and rover position is checked to be 100 still
 it("responds with a false completed value when attempting to move in LOW_POWER mode", function() {
   let command = [new Command("MODE_CHANGE", "LOW_POWER"), new Command("MOVE", 10)];
   let message = new Message("Changing mode to LOW_POWER", command);
@@ -86,18 +87,16 @@ it("responds with a false completed value when attempting to move in LOW_POWER m
   expect(rover.position).toEqual(100);
 })
 
-//test 13
+//test 13 - send commands to move 10, initiating a message 
 it("responds with the position for the move command", function() {
   let commands = [new Command('MOVE', 10)];
-  let message = new Message("Changing mode to LOW_POWER", commands);
+  let message = new Message("Move command message.", commands);
   let rover = new Rover(100);
     expect(rover.position).toEqual(100);
   let response = rover.receiveMessage(message);
     expect(response.results[0].completed).toBe(true);
     expect(rover.position).toEqual(10);
-})
-
-  // 7 tests here!
+}) //is this properly adding 10 to the move or just setting the position to 10? 
 
 });
 
